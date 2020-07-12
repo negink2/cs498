@@ -1,0 +1,105 @@
+.header, .footer{
+    background-color: #90F0D8;        
+}
+.header{
+    display: flex;
+    margin-bottom: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.header .logo{
+    padding-top: 20px;
+}
+.header .logo img{
+    width: 100px;
+}
+.header .introduction{
+    padding-left: 500px;
+    text-align: center;
+}
+.footer{
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.container{
+    padding-top: 20px;
+    margin-left: 20px;
+}
+
+.container .row{
+    min-width: 1300px;
+}
+
+.container .form-control{
+    max-width: 300px;
+}
+
+.container .select-countries{
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    max-width: 400px;
+}
+
+.message{
+    padding: 40px;
+}
+.arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #FF7A33;
+    margin-left: 20px;
+    margin-top: 30px;
+    margin-bottom: -80px;
+  }
+
+.container .label{
+    padding: 5px 20px 0 0;
+}
+
+/* Information */
+.information-col{
+    display: none;
+    padding:20px;
+    padding-left:150px;
+    padding-top:120px;
+}
+
+.information-col label{
+    padding-right: 10px;
+}
+.information-col div{
+    padding-bottom: 20px;
+}
+
+/* SVG */
+.svg-col{
+    min-width: 800px;
+}
+
+
+svg .line{
+    stroke: #00cc99;
+}
+
+div.tooltip {	
+    position: absolute;		
+    width: 200px;					
+    height: relative;					
+    padding: 20px;				
+    font: 12px sans-serif;		
+    background: #FF7A33;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;
+}
+
+svg .dots{
+    fill: #00cc99;
+    stroke: #00cc99;
+}
