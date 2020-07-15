@@ -105,3 +105,31 @@ function convertCSVtoJSON(csv){
         intervalId = 0;
     }
 }
+
+function formatNumber(number){
+    if(number !== undefined && number != null && number != ''){
+        number = parseInt(number);
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    if(number == 0){
+        return 0;
+    }
+    else{
+        return 'N/A'
+    }
+}
+
+function getTotalCases(data, field){
+    var result = 0;
+    if(field == 'new_cases'){
+        data.forEach(function(c){
+            result += parseInt(c.new_cases);
+        });
+    }
+    else if(field == 'new_deaths'){
+        data.forEach(function(c){
+            result += parseInt(c.new_deaths);
+        });        
+    }
+    return result;    
+}

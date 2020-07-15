@@ -1,6 +1,7 @@
-function render(data) {
+function render(data, worldData) {
 
-    if(data !== undefined && data != null && data.length > 0){
+    if(data !== undefined && data != null && data.length > 0 
+        && worldData !== undefined && worldData != null && worldData.length > 0){
 
         var width = 500;
         var height = 650;
@@ -15,26 +16,27 @@ function render(data) {
         .attr("height", 800);
 
         // X
-        const xScale = d3.scaleTime().domain(d3.extent(data, d => {
+        const xScale = d3.scaleTime().domain(d3.extent(worldData, d => {
             //if(d.date != "2019-12-31"){
             return d3.timeParse("%Y-%m-%d")(d.date)
             //}
         }))
 
         var xAxis = xScale
-        .range([0, width + data.length ]);    
+        .range([0, width + worldData.length ]);    
         
         svg.append("g")
         .attr("transform", "translate("+margin+"," + height + ")")
         .call(d3.axisBottom(xAxis));
 
         var x = xScale
-        .range([margin, width + data.length ]);
+        .range([margin, width + worldData.length ]);
+
 
         // Y
         var y = d3.scaleLinear()
-        .domain([0, d3.max(data, function(d) {
-            var cases = parseInt(d.new_cases);
+        .domain([0, d3.max(worldData, function(d) {
+            var cases = parseInt(d.new_deaths);
             var cases = cases < 0 ? 0: cases;
             return cases;
         })])
@@ -57,9 +59,9 @@ function render(data) {
         .attr("x", labelYY)
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("New Covid-19 Cases from Dec. 2019 to Jul. 2020");
+        .text("New Covid-19 Death Cases from Dec. 2019 to Jul. 2020");
 
-
+        //Line
         var line = d3.line()
             .x(function(d) { 
                 var ddate = "";
@@ -69,13 +71,12 @@ function render(data) {
                 return x(ddate);
             })
             .y(function(d) {
-                var cases = parseInt(d.new_cases);
+                var cases = parseInt(d.new_deaths);
                 var cases = cases < 0 ? 0: cases;
                 return y(cases) 
             });
 
-        // line
-        var pth = svg
+        var countryPth = svg
         .append("path")            
         .datum(data)
         .attr("d", line)
@@ -92,28 +93,55 @@ function render(data) {
         .ease(d3.easeLinear)
         .attr("stroke-dashoffset", 0);
 
+        var line2 = d3.line()
+        .x(function(d) { 
+            var ddate = "";
+            //if(d.date != "2019-12-31"){
+            ddate = d3.timeParse("%Y-%m-%d")(d.date)
+            //}                   
+            return x(ddate);
+        })
+        .y(function(d) {
+            var cases = parseInt(d.new_deaths);
+            var cases = cases < 0 ? 0: cases;
+            return y(cases) 
+        });
+
+        var worldPth = svg
+        .append("path")            
+        .datum(worldData)
+        .attr("d", line2)
+        .attr("class", "line2")
+        .attr("fill", "none")
+        .attr("stroke-width", 2);
+
+        var lineLength = d3.select(".line2").node().getTotalLength();
+        d3.selectAll(".line2")
+        .attr("stroke-dasharray", lineLength + " " + lineLength)
+        .attr("stroke-dashoffset", lineLength)
+        .transition()
+        .duration(2500)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+
+
 
         // Tooltip        
         var div = d3.select("body").append("div")	
         .attr("class", "tooltip")				
         .style("opacity", 0);
 
-        var dots = svg.selectAll("dot")	
-        .data(data)
-        .enter().append("circle")        
-        .attr("class", "dots")
-        .attr("r", 3)		
-        .attr("cx", function(d) { return x(d3.timeParse("%Y-%m-%d")(d.date)); })		 
-        .attr("cy", function(d) { return y(d.new_cases); })
+        var div2 = d3.select("body").append("div")	
+        .attr("class", "tooltip2")				
+        .style("opacity", 0);
+
+        worldPth
         .on("mouseover", function(d) {        	
             div.transition()		
             .duration(200)		
             .style("opacity", .9);        		
-            var htmlContent = "<div>Date: <span>" + d3.timeFormat("%m-%d-%Y")(d3.timeParse("%Y-%m-%d")(d.date)) + "</span><br/></div>";
-            htmlContent += "<div>Number of New Cases: <span>"  + formatNumber(d.new_cases) + "</span><br/></div>";
-            htmlContent += "<div>Covid-19 Death Rate: <span>" + formatNumber(d.cvd_death_rate) + "</span><br/></div>";
-            htmlContent += "<div>Handwashing Facilities: <span>" + formatNumber(d.handwashing_facilities) + "</span><br/></div>";
-            htmlContent += "<div>Hospital Beds per Thousand: <span>" + formatNumber(d.hospital_beds_per_thousand) + "</span></div>";
+            var htmlContent = "<div>World's Total Deaths: <span>" + formatNumber(d3.sum(worldData, function(d) { return d.new_deaths;})) + "</span><br/></div>";
+            htmlContent += "<div>World's Population: <span>"  + formatNumber(worldData[0].population) + "</span><br/></div>";
             div.html(htmlContent)	
             .style("left", (d3.event.pageX) + "px")		
             .style("top", (d3.event.pageY - 28) + "px");	
@@ -124,12 +152,22 @@ function render(data) {
             .style("opacity", 0);	
         });
 
-        dots.attr("opacity", 0)
-        .transition()
-        .duration(2500)
-        .ease(d3.easeLinear)
-        .attr("opacity", 1)
-        .attr("stroke-dashoffset", lineLength)
+        countryPth
+        .on("mouseover", function(d) {        	
+            div2.transition()		
+            .duration(200)		
+            .style("opacity", .9);        		
+            var htmlContent2 = "<div>"+data[0].location+"'s Total Deaths: <span>" + formatNumber(d3.sum(data, function(d) { return d.new_deaths})) + "</span><br/></div>";
+            htmlContent2 += "<div>"+data[0].location+"'s Population: <span>"  + formatNumber(data[0].population) + "</span><br/></div>";
+            div2.html(htmlContent2)	
+            .style("left", (d3.event.pageX) + "px")		
+            .style("top", (d3.event.pageY - 28) + "px");	
+        })
+        .on("mouseout", function(d) {		
+            div2.transition()		
+            .duration(500)
+            .style("opacity", 0);	
+        });
 
     }
 }

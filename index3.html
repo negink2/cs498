@@ -6,7 +6,7 @@
         <script src='https://d3js.org/d3.v5.min.js'></script>
         <script src="assets/js/data_manipulator.js"></script>
         <script src="assets/js/owid-covid-data.js"></script>
-        <script src="assets/js/d3functions.js"></script>
+        <script src="assets/js/d3functions3.js"></script>
         <link rel="stylesheet" href="assets/css/styles.css"/>
     </head>
     <body>
@@ -26,7 +26,7 @@
         <div class="navigation-container">
             <div class="navigation">
                 <a href="index.html">
-                    <div class="nav-link link-1 nav-active">
+                    <div class="nav-link link-1">
                         Covid 19 New Cases
                     </div>
                 </a>
@@ -36,7 +36,7 @@
                     </div>
                 </a>
                 <a href="index3.html">
-                    <div class="nav-link link-3">
+                    <div class="nav-link link-3 nav-active">
                         Compare New Cases with World
                     </div>
                 </a>
@@ -48,7 +48,7 @@
             </div>
         </div>
         <div class="message">
-            <p><strong>This page shows the information related to covid-19 new cases in different countries.</strong></p>
+            <p><strong>This page compares the world's new covid-19 cases with the selected country's.</strong></p>
             <p>You may choose a country from the dropdown bellow, and a chart related to the covid-19 data will be represented on the screen.
                 You can also see the other information regarding the selected country on the right hand side.
             </p>
@@ -58,7 +58,7 @@
             </div>
         </div>
         <div id="app1">
-            <div class="container">
+            <div v-show="itemShow" class="container">
                 <div class="row">
                     <div class="col select-countries">
                         <span class="label">Countries</span>
@@ -72,25 +72,17 @@
                     <div class="col svg-col">
                         <div class="svg-container"></div>                        
                     </div>
-                    <div class="col information-col" v-if="country !== undefined && country != null">
-                        <div><p>Country's Information: </p></div>
-                        <div><label>Country: </label><strong>{{country.location}}</strong></div>
-                        <div><label>Continent: </label><strong>{{country.continent}}</strong></div>
-                        <div><label>Population: </label><strong>{{country.population | toFormatted}}</strong></div>
-                        <div><label>Median Age: </label><strong>{{country.median_age}}</strong></div>
-                        <div><label>GDP per Capita: </label><strong>{{country.gdp_per_capita | toFormatted}}</strong></div>
-                        <div><label>Life Expectancy: </label><strong>{{country.life_expectancy}}</strong></div>
-                        <!-- <div><label>Covid Death Rate: </label><strong>{{country.cvd_death_rate}}</strong></div>
-                        <div><label>Handwashing Facilities: </label><strong>{{country.handwashing_facilities}}</strong></div>
-                        <div><label>Hospital Beds per Thousand: </label><strong>{{country.hospital_beds_per_thousand}}</strong></div> -->
-                        <div><label>Diabetes Prevalence: </label><strong>{{country.diabetes_prevalence}}</strong></div>                        
+                    <div class="col information-world-col" v-if="country !== undefined && country != null">
+                        <div><strong>{{country.location}} vs. World Information:</strong></div>
+                        <div v-if="itemShow"><label>{{country.location}} contains </labe><strong>{{country.population | getPopulationPortion(this)}}%</strong> population of the world.</div>
+                        <div v-if="itemShow"><label>{{country.location}} contains </labe><strong>{{country | getNewCasePortion(this)}}%</strong> new covid-19 cases of the world.</div>
                     </div>
                 </div>
             </div>
+            <div v-show="!itemShow"  class="loading">
+                <img src="assets/images/loading.gif"/>
+            </div>
         </div>
-        <!-- <div class="information-container">
-            <div class="svg-container"></div>
-        </div> -->
         <div class="row footer">
             <div class="col">
                 <div>© All rights reserved. </div>
@@ -105,24 +97,33 @@ var app = new Vue({
     data: {
       countries: [],
       graphdata: "",
-      country:{}
+      country:{},
+      worldData: [],
+      countryTotal: 0,
+      worldTotal: 0,
+      itemShow: false
     },
     methods:{
         selectCountry(event, isInitial){
             var countryName = event.target !== undefined ? event.target.value : event;
-            var selectedDataDef = getSelectedCountryData(this.graphdata, countryName);
+            var selectedDataDef = getSelectedCountryData(this.graphdata, countryName);            
             var self = this;
             $.when(selectedDataDef).done(function(d){
-                if(!isInitial){
+                if(!isInitial || isInitial){
                     d3.select("svg").remove();
                 }
                 self.country = d[0];
-                var infoCol = document.querySelector(".information-col");
+                self.countryTotal = getTotalCases(d, 'new_cases');
+                var infoCol = document.querySelector(".information-world-col");
                 if(infoCol !== undefined && infoCol != null){
                     infoCol.style.display = 'block';
                 }
-                render(d);
-            });
+                //render(d, self.worldData);
+                setTimeout(function(){
+                    self.itemShow = true;
+                    render(d, self.worldData);
+                }, 100);
+            });            
             flashCountrySelector();
         }        
     },
@@ -131,8 +132,14 @@ var app = new Vue({
         //$.when(dataDef).done(function(resolvedData){
         this.graphdata = dataDef;
         this.countries = getCountries(dataDef);
-        if(this.graphdata != null && this.graphdata != {}){
-            this.selectCountry('', true);
+        var worldData = getSelectedCountryData(this.graphdata, "World");
+        var self = this;
+        $.when(worldData).done(function(d){
+                self.worldData = d;
+                self.worldTotal = getTotalCases(d, 'new_cases');
+        });
+        if(self.graphdata != null && self.graphdata != {}){
+            self.selectCountry('United States', true);
         }            
         flashCountrySelector();
         //});        
@@ -140,6 +147,25 @@ var app = new Vue({
     filters:{
         toFormatted(number){
             return formatNumber(number);
+        },
+        getPopulationPortion(number, app){
+            var worldPopulation = app.worldData[0].population;
+            var result = (number/worldPopulation) * 100;
+            if(parseFloat(result) > 0.00000){
+                return parseFloat(result).toFixed(5);
+            }
+            else{
+                return result;
+            }            
+        },
+        getNewCasePortion(data, app){
+            var result = (app.countryTotal/app.worldTotal)*100;
+            if(parseFloat(result) > 0.00000){
+                return parseFloat(result).toFixed(5);
+            }
+            else{
+                return result;
+            }
         }
     }
 });

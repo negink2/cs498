@@ -1,11 +1,12 @@
+/* Header and Footer */
 .header, .footer{
-    background-color: #90F0D8;        
+    background-color: #D1FAF0;           
 }
 .header{
     display: flex;
-    margin-bottom: 20px;
     padding-top: 20px;
     padding-bottom: 20px;
+    border-radius: 0 0 85% 85% / 30%; 
 }
 .header .logo{
     padding-top: 20px;
@@ -17,6 +18,7 @@
     padding-left: 500px;
     text-align: center;
 }
+
 .footer{
     text-align: center;
     margin-top: 20px;
@@ -24,6 +26,69 @@
     padding-bottom: 10px;
 }
 
+/* Navigation */
+.navigation-container{
+    padding-left: 400px;
+}
+
+.navigation{
+    display: flex;
+}
+
+.navigation .nav-link{
+    background-color: #90F0D8;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    padding: 22px;
+    padding-top: 30px;
+    margin: 30px;
+    box-shadow: 0px 3px 8px #aaa, inset 0px 2px 3px #fff;
+    cursor: pointer;
+}
+
+.nav-link.nav-active{
+    background-color: #FF7A33;
+}
+
+.navigation a{
+    color: black;
+    font-size: 10pt;
+}
+.navigation a:hover{
+    color: #212529;
+    text-decoration: none;
+}
+
+.navigation .link-1{
+    padding-top: 38px;
+}
+
+ /*End of navigation */
+ /* arrow */
+.message{
+    padding: 40px;
+}
+.arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #FF7A33;
+    margin-left: 20px;
+    margin-top: 30px;
+    margin-bottom: -80px;
+  }
+  .arrow-container{
+    padding-left: 180px;
+}
+/* End of arrow */
+
+/* Container */
+.loading{
+    text-align: center;
+}
 .container{
     padding-top: 20px;
     margin-left: 20px;
@@ -40,40 +105,46 @@
 .container .select-countries{
     display: flex;
     flex-direction: row;
-    padding: 20px;
+    padding: 30px;
     max-width: 400px;
 }
-
-.message{
-    padding: 40px;
-}
-.arrow-down {
-    width: 0;
-    height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 20px solid #FF7A33;
-    margin-left: 20px;
-    margin-top: 30px;
-    margin-bottom: -80px;
-  }
 
 .container .label{
     padding: 5px 20px 0 0;
 }
-
+/* End of Container */
 /* Information */
 .information-col{
     display: none;
     padding:20px;
     padding-left:150px;
-    padding-top:120px;
+    padding-top:100px;
+    background-color: #D1FAF0;
+    border-radius: 50%;
+    max-height: 600px;
+    margin-top: 70px;    
 }
 
-.information-col label{
+.information-world-col{
+    display: none;
+    padding: 20px;
+    padding-left: 50px;
+    padding-top: 100px;
+    background-color: #D1FAF0;
+    border-radius: 5px 50px 5px;
+    max-height: 400px;
+    margin-top: 180px;
+    margin-left: 80px;
+}
+
+.information-col p, .information-world-col p{
+    font-weight: bold;
+}
+
+.information-col label, .information-world-col label{
     padding-right: 10px;
 }
-.information-col div{
+.information-col div, .information-world-col div{
     padding-bottom: 20px;
 }
 
@@ -87,16 +158,36 @@ svg .line{
     stroke: #00cc99;
 }
 
-div.tooltip {	
+svg .line2{
+    stroke: #FF7A33;
+}
+
+div.tooltip, div.tooltip2 {	
     position: absolute;		
-    width: 200px;					
+    width: 250px;					
     height: relative;					
     padding: 20px;				
-    font: 12px sans-serif;		
-    background: #FF7A33;	
+    font: 12px sans-serif;	
     border: 0px;		
     border-radius: 8px;			
     pointer-events: none;
+    z-index: 10000;
+}
+
+div.tooltip{
+    background: #FF7A33;
+}
+
+div.tooltip2{
+    background: #00cc99;
+}
+
+div.tooltip div, div.tooltip2 div{
+    padding: 5px;
+}
+
+div.tooltip div span, div.tooltip2 div span{
+    font-weight: bold;
 }
 
 svg .dots{

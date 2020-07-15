@@ -34,7 +34,7 @@ function render(data) {
         // Y
         var y = d3.scaleLinear()
         .domain([0, d3.max(data, function(d) {
-            var cases = parseInt(d.new_cases);
+            var cases = parseInt(d.new_deaths);
             var cases = cases < 0 ? 0: cases;
             return cases;
         })])
@@ -57,7 +57,7 @@ function render(data) {
         .attr("x", labelYY)
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("New Covid-19 Cases from Dec. 2019 to Jul. 2020");
+        .text("New Covid-19 Death Cases from Dec. 2019 to Jul. 2020");
 
 
         var line = d3.line()
@@ -69,7 +69,7 @@ function render(data) {
                 return x(ddate);
             })
             .y(function(d) {
-                var cases = parseInt(d.new_cases);
+                var cases = parseInt(d.new_deaths);
                 var cases = cases < 0 ? 0: cases;
                 return y(cases) 
             });
@@ -104,13 +104,13 @@ function render(data) {
         .attr("class", "dots")
         .attr("r", 3)		
         .attr("cx", function(d) { return x(d3.timeParse("%Y-%m-%d")(d.date)); })		 
-        .attr("cy", function(d) { return y(d.new_cases); })
+        .attr("cy", function(d) { return y(d.new_deaths); })
         .on("mouseover", function(d) {        	
             div.transition()		
             .duration(200)		
             .style("opacity", .9);        		
             var htmlContent = "<div>Date: <span>" + d3.timeFormat("%m-%d-%Y")(d3.timeParse("%Y-%m-%d")(d.date)) + "</span><br/></div>";
-            htmlContent += "<div>Number of New Cases: <span>"  + formatNumber(d.new_cases) + "</span><br/></div>";
+            htmlContent += "<div>Number of New Death: <span>"  + formatNumber(d.new_deaths) + "</span><br/></div>";
             htmlContent += "<div>Covid-19 Death Rate: <span>" + formatNumber(d.cvd_death_rate) + "</span><br/></div>";
             htmlContent += "<div>Handwashing Facilities: <span>" + formatNumber(d.handwashing_facilities) + "</span><br/></div>";
             htmlContent += "<div>Hospital Beds per Thousand: <span>" + formatNumber(d.hospital_beds_per_thousand) + "</span></div>";
