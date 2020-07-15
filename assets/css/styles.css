@@ -139,6 +139,7 @@
 
 .information-col p, .information-world-col p{
     font-weight: bold;
+    font-size: 13pt;
 }
 
 .information-col label, .information-world-col label{
