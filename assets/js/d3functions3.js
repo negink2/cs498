@@ -140,7 +140,7 @@ function render(data, worldData) {
             div.transition()		
             .duration(200)		
             .style("opacity", .9);        		
-            var htmlContent = "<div>World's Total New Cases: <span>" + formatNumber(d3.sum(worldData, function(d) { return d.new_cases;})) + "</span><br/></div>";
+            var htmlContent = "<div>World's Total Cases: <span>" + formatNumber(d3.sum(worldData, function(d) { return d.new_cases;})) + "</span><br/></div>";
             htmlContent += "<div>World's Population: <span>"  + formatNumber(worldData[0].population) + "</span><br/></div>";
             div.html(htmlContent)	
             .style("left", (d3.event.pageX) + "px")		
@@ -157,7 +157,7 @@ function render(data, worldData) {
             div2.transition()		
             .duration(200)		
             .style("opacity", .9);        		
-            var htmlContent2 = "<div>"+data[0].location+"'s Total New Cases: <span>" + formatNumber(d3.sum(data, function(d) { return d.new_cases;})) + "</span><br/></div>";
+            var htmlContent2 = "<div>"+data[0].location+"'s Total Cases: <span>" + formatNumber(d3.sum(data, function(d) { return d.new_cases;})) + "</span><br/></div>";
             htmlContent2 += "<div>"+data[0].location+"'s Population: <span>"  + formatNumber(data[0].population) + "</span><br/></div>";
             div2.html(htmlContent2)	
             .style("left", (d3.event.pageX) + "px")		
