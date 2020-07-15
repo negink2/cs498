@@ -95,7 +95,7 @@ function render(data) {
 
         // Tooltip        
         var div = d3.select("body").append("div")	
-        .attr("class", "tooltip")				
+        .attr("class", "tooltip tooltip-default")				
         .style("opacity", 0);
 
         var dots = svg.selectAll("dot")	

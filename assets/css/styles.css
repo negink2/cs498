@@ -178,6 +178,10 @@ div.tooltip{
     background: #FF7A33;
 }
 
+.tooltip-default{
+    background: #00cc99 !important;
+}
+
 div.tooltip2{
     background: #00cc99;
 }

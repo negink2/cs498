@@ -58,7 +58,7 @@
             </div>
         </div>
         <div id="app1">
-            <div class="container">
+            <div v-show="itemShow" class="container">
                 <div class="row">
                     <div class="col select-countries">
                         <span class="label">Countries</span>
@@ -87,6 +87,9 @@
                     </div>
                 </div>
             </div>
+            <div v-show="!itemShow"  class="loading">
+                <img src="assets/images/loading.gif"/>
+            </div>
         </div>
         <!-- <div class="information-container">
             <div class="svg-container"></div>
@@ -105,7 +108,8 @@ var app = new Vue({
     data: {
       countries: [],
       graphdata: "",
-      country:{}
+      country:{},
+      itemShow: false
     },
     methods:{
         selectCountry(event, isInitial){
@@ -113,7 +117,7 @@ var app = new Vue({
             var selectedDataDef = getSelectedCountryData(this.graphdata, countryName);
             var self = this;
             $.when(selectedDataDef).done(function(d){
-                if(!isInitial){
+                if(!isInitial || isInitial){
                     d3.select("svg").remove();
                 }
                 self.country = d[0];
@@ -121,7 +125,10 @@ var app = new Vue({
                 if(infoCol !== undefined && infoCol != null){
                     infoCol.style.display = 'block';
                 }
-                render(d);
+                setTimeout(function(){
+                    self.itemShow = true;
+                    render(d);
+                }, 100);
             });
             flashCountrySelector();
         }        
@@ -132,7 +139,7 @@ var app = new Vue({
         this.graphdata = dataDef;
         this.countries = getCountries(dataDef);
         if(this.graphdata != null && this.graphdata != {}){
-            this.selectCountry('', true);
+            this.selectCountry('United States', true);
         }            
         flashCountrySelector();
         //});        
